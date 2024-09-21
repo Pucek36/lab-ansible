@@ -1,0 +1,110 @@
+- name: Update wszystkich paczek
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Instalacja potrzebnych rzeczy
+  package:
+    name: "{{ packages }}"
+    state: latest
+
+- name: Włączenie sudo bez hasła dla użytkownika
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "^%sudo"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Sprawdzenie, czy jest macierz już?
+  shell: cat /proc/mdstat | grep "{{ mdadm_arrays }}"
+  register: "array_check"    # zarejestruj zmienną jako
+  changed_when: true
+  failed_when: true
+  check_mode: yes # yes powoduje skipping, no wyjebie error zależny od w/w
+
+
+- name: Jak nazywa się zmienna mdadm_arrays?
+  debug:
+    var: mdadm_arrays
+        
+- name: Jak nazywa się register array_check?
+  debug:
+    var: array_check
+
+# registered var: array_check
+- name: Utworzenie RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
+  mdadm_arrays:
+    - name: 'md0'
+      devices:
+        - '/dev/sdb'
+        - '/dev/sdc'
+      filesystem: 'ext4'    
+      filesystem_opts: ''
+      level: '1'
+      mountpoint: '/dev/md0'
+      state: 'present'
+      pts: 'noatime'
+  #when: array_check|bool == false
+
+
+
+
+# NAZWA.PL   roles/softraid/tasks/main.yml
+#- name: Create raid
+#  shell: yes | mdadm --create --verbose /dev/{{ item['raid'] }} --level={{ item['level'] }} --raid-devices={{ item['devices'] | length }} {{ item['devices'] | map('regex_replace', '(.*)', '/dev/\1') | join(' ') }}
+#  with_items: "{{ softraid['raids'] }}"
+#  when: "[_raid['results'] | selectattr('item.raid', 'equalto', item['raid']) | list][0][0]['rc'] | bool"
+#  loop_control:
+#    label: "{{ item['raid'] }}"
+#  tags:
+#    - softraid
+
+
+
+
+
+
+# - name: Add the node repo
+#    shell:
+#      cmd: "curl -sL https://deb.nodesource.com/setup_16.x | bash -"
+#    when: not nodesource.stat.exists
+#    tags:
+#      - skip_ansible_lint
+
+
+
+
+
+
+
+
+
+
+
+#- name: Utworzenie RAID1 (sdb i sdc)
+
+
+
+
+
+
+    ######### na sam koniec?? #####      
+    #- name: Zmiana portu ssh na 2803 w configu sshd
+    #lineinfile:
+    #path: /etc/ssh/sshd_config
+    #regexp: "^#Port 22"
+    #line: "Port "{{ sshd_port_2 }}""
+    #backrefs: yes
+
+#- name: Restart sshd
+#  ansible.builtin.service:
+#    name: sshd
+#    state: restarted
+
+#- name: Ustawienie nowego portu ssh dla Ansibla
+#  ansible.builtin.set_fact:
+#    ansible_port: "{{ sshd_port_2 }}"
+  
+
+
