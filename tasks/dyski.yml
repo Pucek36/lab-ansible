@@ -1,0 +1,52 @@
+---
+- debug: msg="{{ block_devices }}"
+- debug: msg="{{ raid_level }}"
+- debug: msg="{{ mdadm_device }}"
+
+- name: Wyciągnięcie potencjalnej macierzy z /proc/mdstat i zapisanie w zmiennej
+  command: egrep -o md[1-9]{3} /proc/mdstat
+  register: mdstat_result
+
+- debug:  msg="{{ mdstat_result }}"
+- debug:  msg={{ mdstat_result | length }} 
+- name: Utworzenie RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
+  shell: yes |  mdadm --create --verbose "{{ mdadm_device }}" --level="{{ raid_level }}" --raid-devices={{ block_devices | length }} {{ block_devices | join(' ')  }}
+  with_items: "{{ block_devices }}"
+  failed_when: {{ mdstat_result | length }}  > 0
+
+tutaj się wypierdala
+
+
+
+#- name: 
+  ###jeszcze montowanie jakieś  plus fstab (zrobienie FSa na urządzeniu  jakie wyszło, czyli nie md0, a md127 - czyli odczytać to ładnie jakoś ze zmiennych)
+  #  lvm w ogóle dawać???? - chyba dawać, jakby się miało rozrosnąć
+
+  ### nie zapominamy o save !!!!
+    ###mdadm --examine --scan --config=/etc/mdadm/mdadm.conf >> /etc/mdadm/mdadm.conf
+
+
+
+
+
+
+
+
+
+######################################################
+#- name: Sprawdzenie, czy już istnieje jakaś macierz
+#  command: egrep md[A-Za-z0-9] /proc/mdstat
+#  register: md_status
+#  failed_when: "md_status.rc not in [ 0, 1 ]"     #obejście, bo jak nie zgrepuje, to walnie kodem (rc) innym niż 0 i wtedy ansible defaultowo nie ruszy dalej
+#- debug: msg="{{ md_status.stdout }}"
+#- debug: msg="{{ md_status.stderr }}"
+
+#- name: wymazanie zerami dysków przed utworzeniem RAIDa
+#  command: mdadm --zero-superblock "{{ block_devices }}"
+#  when: md_status.rc != 0
+
+#  - name: Utworzenie RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
+#  command: mdadm --create --verbose "{{ mdadm_device }}" --level="{{ raid_level }}" --raid-devices={{ block_devices | length }} {{ block_devices | join(' ')  }}  "{{ md_status.rc }}"
+#  with_items: "{{ block_devices }}"
+#  when: md_status.rc != 0
+

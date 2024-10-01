@@ -1,0 +1,15 @@
+---
+# upgrade systemu dorobić!!!
+- name: Update wszystkich paczek
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+  tags: 
+      - update
+- name: Instalacja potrzebnych rzeczy z group_vars
+  package:
+    name: "{{ packages }}"
+    state: latest
+  tags: 
+      - update

@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - import_tasks: tasks/dyski.yml
+      tags:
+          - dyski
+
+
+  roles:
+    - role: system
+      tags:
+          - system ###??? tagować to tutaj, czy lepiej w roles już pojedynczo??????????????????????
+

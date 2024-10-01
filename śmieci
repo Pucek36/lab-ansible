@@ -1,0 +1,26 @@
+
+
+   mdadm_arrays:
+     - name: 'md0'
+       devices:
+        - '/dev/sdb'
+        - '/dev/sdc'
+       filesystem: 'ext4'    
+       filesystem_opts: ''
+       level: '1'
+       mountpoint: '/dev/md0'
+       state: 'present'
+       pts: 'noatime'
+
+
+      
+  #when: array_check|bool == false
+
+#- name: Create raid
+#  shell: yes | mdadm --create --verbose /dev/{{ item['raid'] }} --level={{ item['level'] }} --raid-devices={{ item['devices'] | length }} {{ item['devices'] | map('regex_replace', '(.*)', '/dev/\1') | join(' ') }}
+#  with_items: "{{ softraid['raids'] }}"
+#  when: "[_raid['results'] | selectattr('item.raid', 'equalto', item['raid']) | list][0][0]['rc'] | bool"
+#  loop_control:
+#    label: "{{ item['raid'] }}"
+#  tags:
+#    - softraid

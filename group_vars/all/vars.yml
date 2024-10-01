@@ -1,0 +1,52 @@
+username: tg
+
+packages:
+  - vim
+  - htop
+  - neofetch
+  - tmux 
+  - speedtest-cli
+  - iperf
+  - iperf3
+  - net-tools
+  - whois
+ 
+#softraid:
+#  raid_params:
+#      -mdadm_arrays: /dev/md0
+#        raid_level: 1
+#        block_devices:
+#            - /dev/sdb
+#            - /dev/sdc
+
+
+
+  
+mdadm_device: /dev/md127
+raid_level: 1
+block_devices:
+    - '/dev/sdb'
+    - '/dev/sdc'
+
+#block_devices: '/dev/sdb', '/dev/sdc'
+#block_devices_create: '/dev/sdb /dev/sdc'
+
+
+
+
+
+
+
+
+sshd_port_1:
+  22
+
+sshd_port2:
+  2803
+
+
+
+
+
+
+

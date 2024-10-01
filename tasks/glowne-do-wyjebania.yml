@@ -1,0 +1,12 @@
+#---
+#- hosts: all
+#  become: yes
+  
+
+  #tasks:
+  #roles:
+    #- import_tasks: nowy-serwer.yml
+    #- import_tasks: dyski.yml
+
+    
+
