@@ -5,6 +5,7 @@
   tasks:
     - import_tasks: tasks/dyski.yml
       tags:
+          - never
           - dyski
 
 

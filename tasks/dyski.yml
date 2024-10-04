@@ -1,52 +1,92 @@
+######### playbook celowo przewidziany na sam start na pustym kompie - trochę ryzykowne by  była  taka automatyzacja XD
+######### brak playbooka z dyskami z partycji systemowej, poniższe doyczy tylko 2 dysków pozostałych RAID + LVM
+
 ---
-- debug: msg="{{ block_devices }}"
-- debug: msg="{{ raid_level }}"
-- debug: msg="{{ mdadm_device }}"
+- debug: msg="{{ lab_block_devices }}"
+- debug: msg="{{ lab_raid_level }}"
+- debug: msg="{{ lab_mdadm_device }}"
 
 - name: Wyciągnięcie potencjalnej macierzy z /proc/mdstat i zapisanie w zmiennej
-  command: egrep -o md[1-9]{3} /proc/mdstat
+  shell: egrep -o md[0-9]{1,3} /proc/mdstat
   register: mdstat_result
 
-- debug:  msg="{{ mdstat_result }}"
-- debug:  msg={{ mdstat_result | length }} 
-- name: Utworzenie RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
-  shell: yes |  mdadm --create --verbose "{{ mdadm_device }}" --level="{{ raid_level }}" --raid-devices={{ block_devices | length }} {{ block_devices | join(' ')  }}
-  with_items: "{{ block_devices }}"
-  failed_when: {{ mdstat_result | length }}  > 0
+- debug:  msg={{ mdstat_result.rc }}
 
-tutaj się wypierdala
+- name: Utworzenie (ręczne) RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
+  shell: yes |  mdadm --create --verbose "{{ lab_mdadm_device }}" --level="{{ lab_raid_level }}" --raid-devices={{ lab_block_devices | length }} {{ lab_block_devices | join(' ')  }}
+  with_items: "{{ lab_block_devices }}"
+  failed_when:  mdstat_result.rc  == 0
+  ignore_errors: True
 
+- name: Zapisanie konfiguracji RAIDa do pliku
+  shell: yes | mdadm --detail --scan | tee /etc/mdadm/mdadm.conf; update-initramfs -u
+  failed_when: mdstat_result.rc  == 0
+  ignore_errors: True
 
+- name: Sprawdzenie, czy jest już jakieś PVS utworzone z macierzy
+  shell: pvs | egrep -o md'[1-9]{1,3}'
+  register: md_check_result
 
-#- name: 
-  ###jeszcze montowanie jakieś  plus fstab (zrobienie FSa na urządzeniu  jakie wyszło, czyli nie md0, a md127 - czyli odczytać to ładnie jakoś ze zmiennych)
-  #  lvm w ogóle dawać???? - chyba dawać, jakby się miało rozrosnąć
+- debug: msg="{{ md_check_result }}"
+- debug: msg="{{ md_check_result.rc }}"
 
-  ### nie zapominamy o save !!!!
-    ###mdadm --examine --scan --config=/etc/mdadm/mdadm.conf >> /etc/mdadm/mdadm.conf
+- name: Utworzenie VG
+  community.general.lvg:
+    pvs: "{{ lab_pv_name }}"
+    vg: "{{ lab_vg_name }}"
+  failed_when: md_check_result.rc == 0
+  register: vg_check_result
+  ignore_errors: True
 
+- name: Utworzenie LV z całej dostępnej przestrzeni VG (i tak nie puściłoby dalej, ale w razie czego)
+  community.general.lvol:
+    lv: "{{ lab_lv_name }}"
+    vg: "{{ lab_vg_name }}"
+    size: "{{ lab_lv_size }}"
+  failed_when: md_check_result.rc == 0
+  ignore_errors: True
 
+- name: Sprawdzenie, czy jest już jakaś partycja
+  shell: lsblk | grep -e {{ lab_vg_name }}  -e {{ lab_lv_name }}
+  register: part_check_result
+  
+- debug: msg="{{ part_check_result }}"
+- debug: msg="{{ part_check_result.rc }}"
 
+- name: Dodanie mountpointa
+  file:
+    path: "{{ lab_mntpoint_path }}"
+    state: directory
+    mode: "{{ lab_mntpoint_mode }}"
 
+- name: Utworzenie nowej partycji
+  community.general.parted:
+    device: '/dev/"{{ lab_vg_name }}"/"{{ lab_lv_name }}"'
+    number: 1
+    state: present
+    label: "{{ lab_label }}"
+    fs_type: "{{ lab_fs_type }}"
+  when: part_check_result.rc != 0
+  ignore_errors: True
 
+- name: Sformatowanie nowej partycji
+  community.general.filesystem:
+   fstype: "{{ lab_fs_type }}"
+   dev: '/dev/mapper/{{ lab_vg_name }}-{{ lab_lv_name }}'
+  when:  part_check_result.rc != 0
+  ignore_errors: True
 
+- name: Zamontowanie nowej partycji
+  ansible.posix.mount:
+    src: '/dev/mapper/{{ lab_vg_name }}-{{ lab_lv_name }}'
+    path: "{{ lab_mntpoint_path }}"
+    state: mounted
+    fstype: "{{ lab_fs_type }}"
+  ignore_errors: True
 
+     
+#potrzebne to przy tworzeniu VG???
+    #tag: pvcreate ??? 
+    #pv_options: pvcreate  ???
 
-
-######################################################
-#- name: Sprawdzenie, czy już istnieje jakaś macierz
-#  command: egrep md[A-Za-z0-9] /proc/mdstat
-#  register: md_status
-#  failed_when: "md_status.rc not in [ 0, 1 ]"     #obejście, bo jak nie zgrepuje, to walnie kodem (rc) innym niż 0 i wtedy ansible defaultowo nie ruszy dalej
-#- debug: msg="{{ md_status.stdout }}"
-#- debug: msg="{{ md_status.stderr }}"
-
-#- name: wymazanie zerami dysków przed utworzeniem RAIDa
-#  command: mdadm --zero-superblock "{{ block_devices }}"
-#  when: md_status.rc != 0
-
-#  - name: Utworzenie RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
-#  command: mdadm --create --verbose "{{ mdadm_device }}" --level="{{ raid_level }}" --raid-devices={{ block_devices | length }} {{ block_devices | join(' ')  }}  "{{ md_status.rc }}"
-#  with_items: "{{ block_devices }}"
-#  when: md_status.rc != 0
-
+  #ten number: 1  to zostawiam na sztywno, nie przewiduję jakiśchś z tym kombinacji!!!

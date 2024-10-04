@@ -24,3 +24,42 @@
 #    label: "{{ item['raid'] }}"
 #  tags:
 #    - softraid
+tg@lab:~$ sudo mdadm --detail --scan
+ARRAY /dev/md/0 metadata=1.2 name=lab:0 UUID=6b4d60e8:4b17f1a9:e45c5fd7:68880066
+
+changed: [lab] => {"changed": true, "disk": {"dev": "/dev/dm-1", "logical_block": 512, "model": "Linux device-mapper (linear)", "physical_block": 4096, "size": 976625664.0, "table": "msdos", "unit": "kib"}, "partitions": [{"begin": 1024.0, "end": 976625664.0, "flags": [], "fstype": "", "name": "", "num": 1, "size": 976624640.0, "unit": "kib"}], "script": "unit KiB mkpart primary ext4 0% 100%"}
+
+
+
+tg@lab:~$ sudo mdadm --detail --scan | sudo tee /etc/mdadm/mdadm.conf; update-initramfs -u
+ARRAY /dev/md/127 metadata=1.2 name=lab:0 UUID=6b4d60e8:4b17f1a9:e45c5fd7:68880066
+ln: failed to create hard link '/boot/initrd.img-6.8.0-45-generic.dpkg-bak' => '/boot/initrd.img-6.8.0-45-generic': Operation not permitted
+cp: cannot create regular file '/boot/initrd.img-6.8.0-45-generic.dpkg-bak': Permission denied
+tg@lab:~$ sudo mdadm --detail --scan | sudo tee /etc/mdadm/mdadm.conf; sudo update-initramfs -u
+ARRAY /dev/md/127 metadata=1.2 name=lab:0 UUID=6b4d60e8:4b17f1a9:e45c5fd7:68880066
+update-initramfs: Generating /boot/initrd.img-6.8.0-45-generic
+cryptsetup: ERROR: Couldn't resolve device /dev/mapper/ubuntu--vg-ubuntu--lv
+cryptsetup: WARNING: Couldn't determine root device
+tg@lab:~$ reboot
+Failed to set wall message, ignoring: Interactive authentication required.
+Failed to reboot system via logind: Interactive authentication required.
+Failed to open initctl fifo: Permission denied
+Failed to talk to init daemon.
+tg@lab:~$ sudo reboot
+Connection to 192.168.100.111 closed by remote host.
+Connection to 192.168.100.111 closed.
+tg@tg-thinkpad:~/Pulpit$ 
+
+
+Zminiłem ubuntu-vg na vg-ubuntu
+
+/dev/mapper/vg--ubuntu-lv--ubuntu
+
+cryptsetup: ERROR: Couldn't resolve device /dev/mapper/vg--ubuntu-lv--ubuntu
+cryptsetup: WARNING: Couldn't determine root device
+
+
+lab_mntpoint_mode 
+lab_mntpoint_mode: '744'
+
+#/dev/mapper/vg--data-lv--data1 /mnt/DATA ext4 defaults 0 0
