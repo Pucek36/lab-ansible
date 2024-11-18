@@ -1,3 +1,6 @@
 ---
-- include_tasks: update.yml
+- include_tasks: paczki.yml
+#- include_tasks: netplan.yml
+- include_tasks: nfs.yml
+
 

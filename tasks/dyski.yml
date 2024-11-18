@@ -1,6 +1,5 @@
 ######### playbook celowo przewidziany na sam start na pustym kompie - trochę ryzykowne by  była  taka automatyzacja XD
 ######### brak playbooka z dyskami z partycji systemowej, poniższe doyczy tylko 2 dysków pozostałych RAID + LVM
-
 ---
 - debug: msg="{{ lab_block_devices }}"
 - debug: msg="{{ lab_raid_level }}"
@@ -15,7 +14,8 @@
 - name: Utworzenie (ręczne) RAID1 pod warunkiem że są dyski sdb i sdc i jest już macierz !!!!! 
   shell: yes |  mdadm --create --verbose "{{ lab_mdadm_device }}" --level="{{ lab_raid_level }}" --raid-devices={{ lab_block_devices | length }} {{ lab_block_devices | join(' ')  }}
   with_items: "{{ lab_block_devices }}"
-  failed_when:  mdstat_result.rc  == 0
+  #failed_when:  mdstat_result.rc  == 0
+  when:  mdstat_result.rc  != 0
   ignore_errors: True
 
 - name: Zapisanie konfiguracji RAIDa do pliku

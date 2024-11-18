@@ -63,3 +63,34 @@ lab_mntpoint_mode
 lab_mntpoint_mode: '744'
 
 #/dev/mapper/vg--data-lv--data1 /mnt/DATA ext4 defaults 0 0
+
+
+        check_command                   check_monpass!check_pgsql -t 20 -w 8 -c 10 -P 5432 -l netart_mon -p $USER4$ -d netart_mon -H {{ hostvars[inventory_hostname]['ansible_' + interface]['ipv4_secondaries'][0]['address'] }}
+
+
+    #{ item.interface }} 
+    #loop: {{ networks.lan.interface }}
+    #with items: "{{ networks }}"
+    #dhcp4: true
+      #addresses: '{{ networks.lan.base }}.111/24'
+  #with_dict: "{{ networks.lan.['interface'] }}"
+  #with_dict: {{ lan }}
+
+    #loop: {{ networks[lan][interface] }}
+
+
+    disk:
+  - disksize: 64
+    disktype: thin
+  - disksize: 100
+    disktype: thin
+
+    
+- name: test playbook 
+  hosts: localhost 
+  vars_files: vms.yml
+  tasks:
+    - name: loop over nested
+      debug:
+        msg: '"{{ item.1.disksize }}"  "{{ item.1.disktype }}"'
+      loop: "{{ vms| subelements('disk') }}" 

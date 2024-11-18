@@ -1,0 +1,48 @@
+username: tg
+
+sshd_port_1: 22
+sshd_port_2: 2803
+
+packages:
+  - vim
+  - htop
+  - neofetch
+  - tmux 
+  - speedtest-cli
+  - iperf
+  - iperf3
+  - net-tools
+  - whois
+  - lvm2
+  
+
+lab_raid_level: 1
+lab_mdadm_device: '/dev/md127'
+lab_block_devices:
+    - '/dev/sdb'
+    - '/dev/sdc'
+
+lab_pv_name: '/dev/md127'
+lab_vg_name: 'vgdata'
+lab_lv_name: 'lvdata'
+lab_lv_size: '100%FREE'
+lab_fs_type: 'ext4'
+lab_label: 'gpt'
+lab_mntpoint_path: '/mnt/DATA'
+lab_mntpoint_mode: '755'
+
+
+
+nfs_gid: '1777'
+
+# lista słowników - można się ładnie odwoływać
+#networks:
+#- name: lan
+#  cidr: 192.168.100.0/24
+#  base: 192.168.100
+#  interface: 'ens77'
+
+#- name: vlan
+#  cidr: 8.8.8.8.0/24
+#  base: 8.8.8
+#  interface: 'ens88'

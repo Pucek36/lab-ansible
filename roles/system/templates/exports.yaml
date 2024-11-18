@@ -1,0 +1,6 @@
+/mnt/DATA/laptop_sluzbowy_backup 192.168.100.124(rw,sync,no_subtree_check,root_squash)
+/mnt/DATA/laptop_prywatny_backup IP(rw,sync,no_subtree_check,root_squash)
+/mnt/DATA/serwer_backup IP(rw,sync,no_subtree_check,root_squash)
+/mnt/DATA/stacjonarka_backup IP(rw,sync,no_subtree_check,root_squash)
+/mnt/DATA/tablet_backup IP(rw,sync,no_subtree_check,root_squash)
+/mnt/DATA/telefon_backup IP(rw,sync,no_subtree_check,root_squash)

@@ -1,0 +1,16 @@
+---
+# nfs-server już zainstalowany z modułu paczki w tasku system całym!!
+- name: Dodanie grupy do obsługi nfs
+  ansible.builtin.group:
+    name: nfsshare
+    gid:  "{{ nfs_gid }}"
+    state: present
+
+- name: Dodanie pliku exports
+  ansible.builtin.template:
+    src: ../templates/exports.yaml
+    dest: /etc/exports
+
+- name: Restart exports
+  ansible.builtin.shell:  exportfs -ar
+
