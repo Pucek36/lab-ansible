@@ -3,6 +3,8 @@ username: tg
 sshd_port_1: 22
 sshd_port_2: 2803
 
+
+################## Pod paczki ###############
 packages:
   - vim
   - htop
@@ -16,7 +18,11 @@ packages:
   - lvm2
   - nfs-kernel-server
   - nfs-common
+  - samba 
 
+
+
+############### Pod RAID #################
 lab_raid_level: 1
 lab_mdadm_device: '/dev/md127'
 lab_block_devices:
@@ -29,15 +35,34 @@ lab_lv_name: 'lvdata'
 lab_lv_size: '100%FREE'
 lab_fs_type: 'ext4'
 lab_label: 'gpt'
-lab_mntpoint_path: '/mnt/DATA'
+lab_mntpoint_path: '/mnt/DATA/'
 lab_mntpoint_mode: '755'
 
+
+
+############ Pod NFS i SMB####################
+nfs_group_name: 'nfsshare'
 nfs_gid: '1777'
+smb_user: 'smblabuser'  # dla Linuxa i SMB takie samo
 
 
 
+lap_sl_backup_dir: 'laptop_sluzbowy_backup'
+lap_prv_backup_dir: 'laptop_prywatny_backup'
+stacjonarka_backup_dir: 'stacjonarka_backup'
+lab_backup_dir:  'lab_backup'
+telefon_backup_dir: 'telefon_backup'
+tablet_backup_dir: 'tablet_backup'
 
-
+lab_ip: '192.168.100.111'
+lap_sl_kabel_ip: '192.168.100.112'
+lap_sl_wifi_ip: '192.168.100.113'
+lap_prv_kabel_ip: '192.168.100.114'
+lap_prv_wifi_ip: '192.168.100.115'
+stacjonarka_ip: '192.168.100.116'
+telefon_ip: '192.168.100.117'
+tablet_ip: '192.168.100.118'
+### prz ipkach też trza pomyśleć, jak to ogarnąć, zwłaszcza, jak jakie vlany wjadą...
 
 
  #lista słowników - można się ładnie odwoływać

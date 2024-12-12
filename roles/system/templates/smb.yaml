@@ -1,0 +1,8 @@
+[testowy]
+path = /mnt/DATA/telefon_backup
+username = smblabuser
+browseable = yes
+writable = yes
+guest ok = yes
+create mask = 0755
+directory mask = 0755

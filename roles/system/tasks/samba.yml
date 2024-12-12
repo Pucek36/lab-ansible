@@ -1,0 +1,45 @@
+---
+# utworzenie użytkownika smbuser
+- name: Utworzenie użytkownika dla SMB
+  ansible.builtin.user:
+    name: "{{ smb_user }}"
+    create_home: false
+    state: present
+  become: yes
+
+
+
+- name: Tworzenie katalogów do backupu SMB   #### odpowiednie uprawnienia dodać
+  ansible.builtin.file:
+    state: directory
+    recurse: yes
+    owner: "{{ smb_user }}"
+    path: "{{ item }}"
+  loop:
+    - "{{ lab_mntpoint_path }}{{ tablet_backup_dir }}"
+    - "{{ lab_mntpoint_path }}{{ telefon_backup_dir }}"
+  become: yes
+
+
+- name: Dodanie pliku konfiguracyjnego SMB
+  ansible.builtin.template:
+    src: ../templates/smb.yaml
+    dest: /etc/samba/smb.conf
+
+#- name: Dodanie użytkownika w Sambie
+#  become: yes
+#  command: smbpasswd -a {{ smb_user }}
+#  args:
+#    creates: /etc/samba/smbpasswd
+
+- name: Dodaj użytkownika do Samba
+  lineinfile:
+    path: /etc/samba/smbpasswd
+    regexp: '^{{ user }}:'
+    line: '{{ smb_user }}:{{ lookup("password", "!Gringele21") }}'
+
+
+- name: Restart Samby
+  ansible.builtin.service:
+    name: smbd
+    state: restarted

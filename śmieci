@@ -94,3 +94,7 @@ lab_mntpoint_mode: '744'
       debug:
         msg: '"{{ item.1.disksize }}"  "{{ item.1.disktype }}"'
       loop: "{{ vms| subelements('disk') }}" 
+
+
+
+      

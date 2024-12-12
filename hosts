@@ -1,3 +1,6 @@
 [dom]
-lab ansible_host=192.168.100.111 ansible_user=tg ansible_connection=ssh ansible_private_key_file=/home/tg/.ssh/lab
+lab ansible_host=192.168.100.111 ansible_user=tg ansible_connection=ssh ansible_private_key_file=/home/tg/.ssh/lab77
 #lab ansible_host=192.168.100.111 ansible_user=ansible ansible_connection=ssh ansible_private_key_file=/home/ansible/.ssh/lab
+#laptop_sluzbowy_przew ansible_host=192.168.100.112
+#laptop_prywatnyyyy_wifi ansible_host=192.168.100.115
+#stacjonarka ansible_host=192.168.100.116

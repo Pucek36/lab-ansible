@@ -1,10 +1,23 @@
 ---
 # nfs-server już zainstalowany z modułu paczki w tasku system całym!!
-- name: Dodanie grupy do obsługi nfs
+- name: Dodanie grupy do obsługi NFS
   ansible.builtin.group:
-    name: nfsshare
+    name: "{{ nfs_group_name }}"
     gid:  "{{ nfs_gid }}"
     state: present
+
+- name: Tworzenie katalogów do backupu NFS
+  ansible.builtin.file:
+    state: directory
+    recurse: yes
+    group: "{{ nfs_group_name }}"
+    path: "{{ item }}"
+  loop:
+    - "{{ lab_mntpoint_path }}{{ lap_sl_backup_dir }}"
+    - "{{ lab_mntpoint_path }}{{ lap_prv_backup_dir }}"
+    - "{{ lab_mntpoint_path }}{{ lab_backup_dir }}"
+    - "{{ lab_mntpoint_path }}{{ stacjonarka_backup_dir }}"
+  become: yes
 
 - name: Dodanie pliku exports
   ansible.builtin.template:
@@ -14,3 +27,6 @@
 - name: Restart exports
   ansible.builtin.shell:  exportfs -ar
 
+
+
+######## tu jeszcze można dodać taska z wymienionymi hostami: lapki + PC, żeby potworzyć /etc/fstab na nich i zamontować od razu...

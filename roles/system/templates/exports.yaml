@@ -1,6 +1,5 @@
-/mnt/DATA/laptop_sluzbowy_backup 192.168.100.124(rw,sync,no_subtree_check,root_squash)
-/mnt/DATA/laptop_prywatny_backup IP(rw,sync,no_subtree_check,root_squash)
-/mnt/DATA/serwer_backup IP(rw,sync,no_subtree_check,root_squash)
-/mnt/DATA/stacjonarka_backup IP(rw,sync,no_subtree_check,root_squash)
-/mnt/DATA/tablet_backup IP(rw,sync,no_subtree_check,root_squash)
-/mnt/DATA/telefon_backup IP(rw,sync,no_subtree_check,root_squash)
+#opcje NFS nie są wsadzone w zmienne do host_vars, bo nie wiadomo jeszcze, czy się nie będą różnić - aczkolwiek jak to template, to nie ma sensu w sumie i tak...
+{{ lab_mntpoint_path }}{{ lap_sl_backup_dir }} {{ lap_sl_kabel_ip }}(rw,sync,no_subtree_check,root_squash)
+{{ lab_mntpoint_path }}{{lap_prv_backup_dir}} {{ lap_prv_wifi_ip }}(rw,sync,no_subtree_check,root_squash)
+{{ lab_mntpoint_path }}{{ lab_backup_dir }} {{ lab_ip }}(rw,sync,no_subtree_check,root_squash)
+{{ lab_mntpoint_path }}{{ stacjonarka_backup_dir }} {{ stacjonarka_ip }}(rw,sync,no_subtree_check,root_squash)

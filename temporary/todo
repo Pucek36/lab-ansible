@@ -1,0 +1,23 @@
+na kliencie trzeba zrobić:  sudo groupadd -g 1777 nfsshare
+i zamontować: sudo mount -t nfs 192.168.100.111:/mnt/DATA/laptop_sluzbowy_backup /mnt/LAB/
+dorzucić /etc/fstab na oba lapki
+
+
+
+
+b8:27:eb:1e:1b:05          192.168.100.107          RPI
+a8:a1:59:b2:c6:6d           192.168.100.111          LAB
+54:05:db:f4:e1:83           192.168.100.112          Laptop służbowy  przewód
+64:bc:58:63:ae:c5           192.168.100.113          Laptop służbowy - wifi                                                                                     
+e8:6a:64:d2:4f:55           192.168.100.114          Laptop prywatny - przewód
+d4:3b:04:f6:fe:f0            192.168.100.115          Laptop prywatny - wifi
+a8:a1:59:23:61:25          192.168.100.116          Stacjonarka   
+a4:55:90:d8:36:8e          192.168.100.117          Telefon
+c0:16:93:b6:e3:6a          192.168.100.118          Tablet
+
+
+
+0c:d2:92:59:7c:61          192.168.100.109         ???
+
+
+### prz ipkach też trza pomyśleć, jak to ogarnąć, zwłaszcza, jak jakie vlany wjadą...
