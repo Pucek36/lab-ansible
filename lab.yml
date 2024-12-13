@@ -1,6 +1,7 @@
 ---
 - hosts: all
   become: yes
+  #vars_files: vault/sikret.yml
 
   tasks:
     - import_tasks: tasks/dyski.yml

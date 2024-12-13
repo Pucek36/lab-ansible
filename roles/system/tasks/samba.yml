@@ -1,42 +1,62 @@
 ---
-# utworzenie użytkownika smbuser
-- name: Utworzenie użytkownika dla SMB
-  ansible.builtin.user:
-    name: "{{ smb_user }}"
-    create_home: false
+###### Instalacja Samby
+
+- name: Dołączenie pliku z hasłami
+  ansible.builtin.include_vars:
+    file: "{{ sikret_file }}"
+
+- name: Utworzenie grupy w systemie do obsługi SMB
+  ansible.builtin.group:
+    name: "{{ smb_group_name }}"
     state: present
+
+- name: Utworzenie użytkownika w systemie do obsługi SMB
+  ansible.builtin.user:
+    name: "{{ smb_user_name }}"
+    create_home: false
+    shell: /sbin/nologin
+    state: present
+    system: no
   become: yes
-
-
 
 - name: Tworzenie katalogów do backupu SMB   #### odpowiednie uprawnienia dodać
   ansible.builtin.file:
     state: directory
     recurse: yes
-    owner: "{{ smb_user }}"
+    owner: "{{ smb_user_name }}"
+    group: "{{ smb_group_name }}"
     path: "{{ item }}"
   loop:
     - "{{ lab_mntpoint_path }}{{ tablet_backup_dir }}"
     - "{{ lab_mntpoint_path }}{{ telefon_backup_dir }}"
   become: yes
 
-
 - name: Dodanie pliku konfiguracyjnego SMB
   ansible.builtin.template:
     src: ../templates/smb.yaml
     dest: /etc/samba/smb.conf
 
-#- name: Dodanie użytkownika w Sambie
-#  become: yes
-#  command: smbpasswd -a {{ smb_user }}
-#  args:
-#    creates: /etc/samba/smbpasswd
+- name: Sprawdzenie czy istnieje użytkownik w smbdpasswd
+  command: /usr/bin/pdbedit -L
+  register: pdb_users
 
-- name: Dodaj użytkownika do Samba
-  lineinfile:
-    path: /etc/samba/smbpasswd
-    regexp: '^{{ user }}:'
-    line: '{{ smb_user }}:{{ lookup("password", "!Gringele21") }}'
+- name: Utworzenie hasła dla użytkownika SMB
+  command:
+    cmd: /usr/bin/smbpasswd -s -a smblabuser
+    stdin: |
+      "{{ smblabuser_password }}"
+      "{{ smblabuser_password }}"
+  when: pdb_users.stdout.find('smb_user_name') == -1
+  vars:
+    smbuser_password: "{{ smblabuser_password1 }}"
+  become: yes
+  register: samba_password
+
+- debug: msg= "{{ pdb_users.stdout.find }}"
+  ignore_errors: yes
+- debug: msg= "{{ samba_password }}"
+  ignore_errors: yes
+###hasło jest kurwa złe z jakiegoś powodu!!!
 
 
 - name: Restart Samby

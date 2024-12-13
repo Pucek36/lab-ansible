@@ -2,7 +2,7 @@ username: tg
 
 sshd_port_1: 22
 sshd_port_2: 2803
-
+sikret_file: '/home/tg/Pulpit/LAB/tglab2/vault/sikret.yml'
 
 ################## Pod paczki ###############
 packages:
@@ -43,7 +43,9 @@ lab_mntpoint_mode: '755'
 ############ Pod NFS i SMB####################
 nfs_group_name: 'nfsshare'
 nfs_gid: '1777'
-smb_user: 'smblabuser'  # dla Linuxa i SMB takie samo
+smb_group_name: 'smblabuser' 
+smb_user_name: 'smblabuser'  # dla systemu i Samby takie samo
+
 
 
 

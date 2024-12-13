@@ -1,6 +1,6 @@
-[testowy]
-path = /mnt/DATA/telefon_backup
-username = smblabuser
+[telefon]
+path = {{ lab_mntpoint_path }}{{ telefon_backup_dir }}
+username = {{ smb_user_name }}
 browseable = yes
 writable = yes
 guest ok = yes
