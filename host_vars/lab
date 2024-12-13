@@ -2,7 +2,7 @@ username: tg
 
 sshd_port_1: 22
 sshd_port_2: 2803
-sikret_file: '/home/tg/Pulpit/LAB/tglab2/vault/sikret.yml'
+sikret_file: 'vault/sikrets.yml'
 
 ################## Pod paczki ###############
 packages:

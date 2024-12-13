@@ -16,10 +16,10 @@
     create_home: false
     shell: /sbin/nologin
     state: present
-    system: no
+    #system: no
   become: yes
 
-- name: Tworzenie katalogów do backupu SMB   #### odpowiednie uprawnienia dodać
+- name: Tworzenie katalogów do backupu SMB   #### odpowiednie uprawnienia dodać..?
   ansible.builtin.file:
     state: directory
     recurse: yes
@@ -44,19 +44,15 @@
   command:
     cmd: /usr/bin/smbpasswd -s -a smblabuser
     stdin: |
-      "{{ smblabuser_password }}"
-      "{{ smblabuser_password }}"
+      {{ smblabuser_password }}
+      {{ smblabuser_password }}
   when: pdb_users.stdout.find('smb_user_name') == -1
   vars:
-    smbuser_password: "{{ smblabuser_password1 }}"
-  become: yes
+    smblabuser_password: "{{ smblabuser_password }}"
   register: samba_password
 
-- debug: msg= "{{ pdb_users.stdout.find }}"
-  ignore_errors: yes
-- debug: msg= "{{ samba_password }}"
-  ignore_errors: yes
-###hasło jest kurwa złe z jakiegoś powodu!!!
+
+
 
 
 - name: Restart Samby

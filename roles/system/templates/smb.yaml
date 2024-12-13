@@ -3,6 +3,15 @@ path = {{ lab_mntpoint_path }}{{ telefon_backup_dir }}
 username = {{ smb_user_name }}
 browseable = yes
 writable = yes
-guest ok = yes
+#guest ok = yes
+create mask = 0755
+directory mask = 0755
+
+[tablet]
+path = {{ lab_mntpoint_path }}{{ tablet_backup_dir }}
+username = {{ smb_user_name }}
+browseable = yes
+writable = yes
+#guest ok = yes
 create mask = 0755
 directory mask = 0755
